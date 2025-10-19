@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FX Plug Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+    }
+    .box {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .msg {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #f87171;
+    }
+    .switch, .reset {
+      margin-top: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #93c5fd;
+    }
+    .switch:hover, .reset:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2 id="form-title">Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="action-btn" onclick="login()">Login</button>
+    <p class="msg" id="msg"></p>
+    <p class="switch" onclick="toggleMode()">Don’t have an account? Sign Up</p>
+    <p class="reset" onclick="resetPassword()">Forgot Password?</p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      sendPasswordResetEmail 
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBWl0r6BN1o8aPufdw8_biL4oXWExV_7FQ",
+      authDomain: "fx-plug.firebaseapp.com",
+      projectId: "fx-plug",
+      storageBucket: "fx-plug.firebasestorage.app",
+      messagingSenderId: "980547805522",
+      appId: "1:980547805522:web:52a078fa50661a4c575a8b",
+      measurementId: "G-CSER8XM8RN"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let isLogin = true;
+
+    // Login or Sign Up
+    window.login = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("msg");
+
+      if (!email || !password) {
+        msg.style.color = "#f87171";
+        msg.innerText = "Please enter email and password.";
+        return;
+      }
+
+      if (isLogin) {
+        // LOGIN
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            msg.style.color = "lightgreen";
+            msg.innerText = "Login successful! Redirecting...";
+            setTimeout(() => window.location.href = "FX PLUG EA.html", 1500);
+          })
+          .catch((error) => {
+            msg.style.color = "#f87171";
+            msg.innerText = error.message;
+          });
+      } else {
+        // SIGN UP
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            msg.style.color = "lightgreen";
+            msg.innerText = "Account created! Redirecting...";
+            setTimeout(() => window.location.href = "FX PLUG 2.0.html", 1500);
+          })
+          .catch((error) => {
+            msg.style.color = "#f87171";
+            if (error.code === "auth/email-already-in-use") {
+              msg.innerText = "Email already registered. Please login instead.";
+            } else {
+              msg.innerText = error.message;
+            }
+          });
+      }
+    }
+
+    // Toggle Login / Sign Up
+    window.toggleMode = function() {
+      isLogin = !isLogin;
+      document.getElementById("form-title").innerText = isLogin ? "Login" : "Sign Up";
+      document.getElementById("action-btn").innerText = isLogin ? "Login" : "Sign Up";
+      document.querySelector(".switch").innerText = 
+        isLogin ? "Don’t have an account? Sign Up" : "Already have an account? Login";
+      document.getElementById("msg").innerText = "";
+    }
+
+    // Forgot Password
+    window.resetPassword = function() {
+      const email = document.getElementById("email").value;
+      const msg = document.getElementById("msg");
+
+      if (!email) {
+        msg.style.color = "#f87171";
+        msg.innerText = "Please enter your email first.";
+        return;
+      }
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          msg.style.color = "lightgreen";
+          msg.innerText = "Password reset email sent!";
+        })
+        .catch((error) => {
+          msg.style.color = "#f87171";
+          msg.innerText = error.message;
+        });
+    }
+  </script>
+</body>
+</html>

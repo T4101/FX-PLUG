@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX PLUG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links li {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Home Page */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 100, 200, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 30px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Trading Section */
+        .trading-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .trading-widgets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .widget h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Brokers Section */
+        .brokers-section {
+            padding: 4rem 2rem;
+            background: #0f0f0f;
+        }
+
+        .brokers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .broker-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .broker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .broker-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        /* E-commerce Page */
+        .ecommerce-page {
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+
+        .robots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .robot-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .robot-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .robot-title {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        .robot-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 1.5rem;
+        }
+
+        .robot-features {
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .robot-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .robot-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .robot-features li:before {
+            content: "✓ ";
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .buy-button {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .buy-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+
+        .close:hover {
+            color: #FFD700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #FFD700;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Admin Page */
+        .admin-page {
+            padding: 2rem;
+            background: linear-gradient(135deg, #2d1b2d, #1a1a1a);
+        }
+
+        .admin-header {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .user-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .user-item {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+
+        /* About Page */
+        .about-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Contact Page */
+        .contact-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .trading-widgets {
+                grid-template-columns: 1fr;
+            }
+            
+            .robots-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .brokers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">FX PLUG</div>
+            <ul class="nav-links">
+                <li onclick="showPage(&#39;home&#39;)">Home</li>
+                <li onclick="showPage(&#39;about&#39;)">About</li>
+                <li onclick="showPage(&#39;ecommerce&#39;)">Robots</li>
+                <li onclick="showPage(&#39;contact&#39;)">Contact</li>
+                <li onclick="showPage(&#39;admin&#39;)">Admin</li>
+            </ul>
+            <button class="login-btn" onclick="showLoginModal()">Welcome!</button>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <section class="hero">
+            <video class="video-background" autoplay="" muted="" loop="">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>FX PLUG</h1>
+                <p>Advanced Forex Trading Solutions &amp; Expert Advisors</p>
+                <a href="file:///C:/Users/tseliso/Desktop/website%20templates/FX PLUG WEBSITE/FX PLUG 2.0.html" class="cta-button">
+            </div>
+        </section>
+        <section class="trading-section" id="trading">
+            <div class="container">
+                <h2 class="section-title">Live Trading Tools</h2>
+                <div class="trading-widgets">
+                    <div class="widget">
+                        <h3>Economic Calendar</h3>
+                        <div style="height: 400px; background: rgba(0,0,0,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <iframe src="./FX PLUG 2.0_files/saved_resource.html" width="100%" height="400" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="widget">
+                        <h3>Live Chart</h3>
+                        <div style="height: 400px;">
+                            <div class="tradingview-widget-container">
+                                <div id="tradingview_chart"><div id="tradingview_c7c6a-wrapper" style="position: relative; box-sizing: content-box; font-family: -apple-system, BlinkMacSystemFont, &quot;Trebuchet MS&quot;, Roboto, Ubuntu, sans-serif; margin: 0px auto !important; padding: 0px !important; width: 100%; height: 400px;"><iframe title="advanced chart TradingView widget" lang="en" id="tradingview_c7c6a" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen="true" src="./FX PLUG 2.0_files/saved_resource(1).html" style="width: 100%; height: 100%; margin: 0px !important; padding: 0px !important;"></iframe></div></div>
+                                <script type="text/javascript" src="./FX PLUG 2.0_files/tv.js.download"></script>
+                                <script type="text/javascript">
+                                new TradingView.widget({
+                                    "width": "100%",
+                                    "height": 400,
+                                    "symbol": "FX:EURUSD",
+                                    "interval": "D",
+                                    "timezone": "Etc/UTC",
+                                    "theme": "dark",
+                                    "style": "1",
+                                    "locale": "en",
+                                    "toolbar_bg": "#f1f3f6",
+                                    "enable_publishing": false,
+                                    "allow_symbol_change": true,
+                                    "container_id": "tradingview_chart"
+                                });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="brokers-section">
+            <div class="container">
+                <h2 class="section-title">Recommended Brokers</h2>
+                <div class="brokers-grid">
+                    <div class="broker-card" onclick="window.open('https://www.xm.com', '_blank')">
+                        <div class="broker-logo">XM MARKETS</div>
+                        <p>Leading global broker with excellent execution</p>
+                    </div>
+                    <div class="broker-card" onclick="window.open('https://www.justmarkets.com', '_blank')">
+                        <div class="broker-logo">JUST MARKETS</div>
+                        <p>Competitive spreads and reliable platform</p>
+                    </div>
+                    <div class="broker-card" onclick="window.open(&#39;https://www.razormarkets.com&#39;, &#39;_blank&#39;)">
+                        <div class="broker-logo">RAZOR MARKETS</div>
+                        <p>Ultra-low spreads for professional traders</p>
+                    </div>
+                    <div class="broker-card" onclick="window.open(&#39;https://www.fbkmarkets.com&#39;, &#39;_blank&#39;)">
+                        <div class="broker-logo">FBK MARKETS</div>
+                        <p>Advanced trading tools and analytics</p>
+                    </div>
+                    <div class="broker-card" onclick="window.open(&#39;https://www.exness.com&#39;, &#39;_blank&#39;)">
+                        <div class="broker-logo">EXNESS</div>
+                        <p>Unlimited leverage and instant execution</p>
+                    </div>
+                    <div class="broker-card" onclick="window.open(&#39;https://www.deriv.com&#39;, &#39;_blank&#39;)">
+                        <div class="broker-logo">DERIV</div>
+                        <p>Innovative trading platform with unique features</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div><style>.tradingview-widget-copyright {font-size: 13px !important; line-height: 32px !important; text-align: center !important; vertical-align: middle !important; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important; color: #B2B5BE !important;} .tradingview-widget-copyright .blue-text {color: #2962FF !important;} .tradingview-widget-copyright a {text-decoration: none !important; color: #B2B5BE !important;} .tradingview-widget-copyright a:visited {color: #B2B5BE !important;} .tradingview-widget-copyright a:hover .blue-text {color: #1E53E5 !important;} .tradingview-widget-copyright a:active .blue-text {color: #1848CC !important;} .tradingview-widget-copyright a:visited .blue-text {color: #2962FF !important;}</style>
+
+    <!-- About Page -->
+    <div id="about" class="page">
+        <section class="about-section">
+            <div class="container">
+                <h2 class="section-title">About FX PLUG</h2>
+                <div class="about-content">
+                    <p>
+                        FX PLUG is a leading provider of advanced forex trading solutions, specializing in expert advisors and automated trading systems. Founded by professional traders with over a decade of experience in the financial markets.
+                    </p>
+                    <p>
+                        Our mission is to democratize forex trading by providing institutional-quality tools to retail traders worldwide. We believe that everyone deserves access to professional trading technology that can help them achieve consistent profits in the forex market.
+                    </p>
+                    <p>
+                        With thousands of satisfied customers globally, FX PLUG has established itself as a trusted name in the forex community. Our expert advisors are rigorously tested and optimized to perform in various market conditions.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- E-commerce Page -->
+    <div id="ecommerce" class="page">
+        <div class="ecommerce-page">
+            <div class="container">
+                <h2 class="section-title">Professional Trading Robots</h2>
+                <div class="robots-grid">
+                    <div class="robot-card">
+                        <h3 class="robot-title">FX PLUG EA</h3>
+                        <div class="robot-price">R1,200</div>
+                        <div class="robot-features">
+                            <h4>Premium Features:</h4>
+                            <ul>
+                                <li>Advanced AI-powered trading algorithms</li>
+                                <li>Works on PC platforms (MT4/MT5)</li>
+                                <li>Supports copy trading functionality</li>
+                                <li>Multi-currency pair compatibility</li>
+                                <li>Risk management system included</li>
+                                <li>24/7 automated trading</li>
+                                <li>Real-time market analysis</li>
+                                <li>Lifetime updates included</li>
+                                <li>Professional support</li>
+                            </ul>
+                        </div>
+                        <button class="buy-button" onclick="buyRobot(&#39;FX PLUG EA&#39;, &#39;R1200&#39;)">Buy Now</button>
+                    </div>
+                    
+                    <div class="robot-card">
+                        <h3 class="robot-title">FX SCALPER</h3>
+                        <div class="robot-price">R800</div>
+                        <div class="robot-features">
+                            <h4>Scalping Features:</h4>
+                            <ul>
+                                <li>High-frequency scalping strategy</li>
+                                <li>Works on PC platforms (MT4/MT5)</li>
+                                <li>Supports copy trading functionality</li>
+                                <li>Optimized for major currency pairs</li>
+                                <li>Low drawdown protection</li>
+                                <li>Quick profit targeting</li>
+                                <li>News filter protection</li>
+                                <li>Easy installation and setup</li>
+                                <li>Full documentation included</li>
+                            </ul>
+                        </div>
+                        <button class="buy-button" onclick="buyRobot(&#39;FX SCALPER&#39;, &#39;R800&#39;)">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact" class="page">
+        <section class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Get In Touch</h2>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Name</label>
+                        <input type="text" id="contact-name" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <input type="text" id="contact-subject" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" rows="5" style="width: 100%; padding: 0.8rem; border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 1rem; resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="cta-button" style="width: 100%;">Send Message</button>
+                </form>
+                
+                <div class="contact-info">
+                    <h3 style="color: #FFD700; margin-bottom: 1rem;">Contact Information</h3>
+                    <p><strong>WhatsApp:</strong> +266 63088465/+266 56528732</p>
+                    <p><strong>Email:</strong> info@fxplug5.com</p>
+                    <p><strong>Support Hours:</strong> 24/7</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="admin" class="page">
+        <div class="admin-page">
+            <div class="container">
+                <div id="admin-login">
+                    <h2 class="section-title">Admin Access</h2>
+                    <div class="contact-form" style="max-width: 400px;">
+                        <div class="form-group">
+                            <label for="admin-pin">Enter Admin PIN</label>
+                            <input type="password" id="admin-pin" placeholder="Enter PIN">
+                        </div>
+                        <button class="cta-button" onclick="adminLogin()" style="width: 100%;">Login</button>
+                    </div>
+                </div>
+                
+                <div id="admin-dashboard" style="display: none;">
+                    <div class="admin-header">
+                        <h2 class="section-title">Admin Dashboard</h2>
+                        <p>Welcome, Administrator. Here are the registered users:</p>
+                    </div>
+                    
+                    <div class="user-list">
+                        <h3 style="color: #FFD700; margin-bottom: 2rem;">Registered Users</h3>
+                        <div id="users-container">
+                            <p>No users registered yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">×</span>
+            <h2 style="color: #FFD700; margin-bottom: 2rem; text-align: center;">Login / Register</h2>
+            
+            <div id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required="">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required="">
+                </div>
+                <button class="cta-button" onclick="loginUser()" style="width: 100%; margin-bottom: 1rem;">Login</button>
+                <button class="cta-button" onclick="registerUser()" style="width: 100%; background: linear-gradient(45deg, #00ff00, #00cc00);">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Login Modal
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        // User Registration and Login
+        function registerUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Get existing users or create empty array
+            let users = JSON.parse(localStorage.getItem('fxplug_users') || '[]');
+            
+            // Check if user already exists
+            if (users.find(user => user.email === email)) {
+                alert('User already exists with this email');
+                return;
+            }
+
+            // Add new user
+            users.push({
+                email: email,
+                password: password,
+                registrationDate: new Date().toISOString()
+            });
+
+            // Save to localStorage
+            localStorage.setItem('fxplug_users', JSON.stringify(users));
+            
+            alert('Registration successful! You can now login.');
+            closeLoginModal();
+        }
+
+        function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('fxplug_users') || '[]');
+            
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                alert('Login successful! Welcome to FX PLUG.');
+                closeLoginModal();
+                // Store current user session
+                localStorage.setItem('fxplug_current_user', JSON.stringify(user));
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        // Admin Functions
+        function adminLogin() {
+            const pin = document.getElementById('admin-pin').value;
+            
+            if (pin === '5959') {
+                document.getElementById('admin-login').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                loadUsers();
+            } else {
+                alert('Invalid PIN');
+            }
+        }
+
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('fxplug_users') || '[]');
+            const container = document.getElementById('users-container');
+            
+            if (users.length === 0) {
+                container.innerHTML = '<p>No users registered yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            users.forEach((user, index) => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                userDiv.innerHTML = `
+                    <h4>User #${index + 1}</h4>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Registration Date:</strong> ${new Date(user.registrationDate).toLocaleString()}</p>
+                `;
+                container.appendChild(userDiv);
+            });
+        }
+
+        // E-commerce Functions
+        function buyRobot(robotName, price) {
+            const message = `Hello! I'm interested in purchasing ${robotName} for ${price}. Please provide more details about the purchase process.`;
+            const whatsappUrl = `https://wa.me/26663088465?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Contact Form
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target == modal) {
+                closeLoginModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            const currentUser = localStorage.getItem('fxplug_current_user');
+            if (currentUser) {
+                document.querySelector('.login-btn').textContent = 'Welcome!';
+            }
+        });
+    </script>
+
+</body></html>
